@@ -1,0 +1,43 @@
+# System Architecture Flowchart
+
+If your markdown viewer does not support Mermaid, here is a simplified, text-based flowchart of the SIEM architecture that you can easily copy and paste into your documentation:
+
+
+[ Frontend (React UI) ]
+   |
+   |--- (HTTP POST /api/scan) ---> [ Node.js Backend ] ---> (Query) ---> [ VirusTotal API ]
+   |
+   |<-- (WebSockets Push) -------- [ Node.js Backend ]
+
+
+[ ML Packet Sniffer ]
+   |
+   |--- (Extracts Features)
+   v
+[ Upstash Redis Queue ]
+   |
+   |--- (Pulls Features)
+   v
+[ ML Inference Engine ] ---> (Uses XGBoost ML Model)
+   |
+   |--- (If Threat Detected)
+   v
+[ Upstash Redis Pub/Sub ]
+   |
+   |--- (Subscribes to Alerts)
+   v
+[ Node.js Backend ]
+   |
+   |--- (1. Saves to DB) --------> [ MongoDB Atlas ]
+   |
+   |--- (2. Alerts Admin) -------> [ Telegram Bot API ]
+   |
+   |--- (3. Updates UI) ---------> [ Frontend (React UI) ]
+
+
+
+### Endpoints Summary:
+1. /api/scan : Frontend sends URL/IP/Hash here -> Backend checks VirusTotal
+2. /api/auth : User Login and Registration
+3. /api/history : Fetch historical threat logs from MongoDB
+4. /api/admin : Admin management endpoints
